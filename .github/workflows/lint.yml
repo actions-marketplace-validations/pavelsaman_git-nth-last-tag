@@ -6,6 +6,8 @@ on:
       - '**.md'
       - '**.yml'
       - '**.yaml'
+    tags-ignore:
+      - '*'
 
 jobs:
   check-markdown:
