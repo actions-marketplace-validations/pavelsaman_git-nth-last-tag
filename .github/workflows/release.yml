@@ -17,13 +17,12 @@ jobs:
           fetch-depth: 0
       - name: Get previous tag
         id: previoustag
-        run: |
-          echo "::set-output name=tag::$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))"
+        uses: pavelsaman/git-nth-last-tag@v1.0.0
+        with:
+          skip: 1
       - name: Get current tag
         id: currenttag
-        run: |
-          CURRENT_TAG=${GITHUB_REF##*/}
-          echo "::set-output name=tag::$CURRENT_TAG"
+        uses: pavelsaman/git-nth-last-tag@v1.0.0
       - name: Get commit messages since last tag
         id: commits
         run: |
