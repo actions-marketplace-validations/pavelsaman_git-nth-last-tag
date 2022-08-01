@@ -1,0 +1,27 @@
+name: Git nth last tag
+description: Get nth tag from the last tag
+author: Pavel Saman
+
+branding:
+  icon: hash
+  color: gray-dark
+
+inputs:
+  skip:
+    description: How many tags from the last one should be skipped
+    required: false
+    default: '0'
+
+outputs:
+  tag:
+    description: Tag name
+    value: ${{ steps.gettag.outputs.tag }}
+
+runs:
+  using: composite
+  steps:
+    - id: gettag
+      shell: bash
+      run: |
+        skip=$((${{ inputs.skip }} + 1))
+        echo "::set-output name=tag::$(git tag | tail -$skip | head -1 | tr -d '\n')"

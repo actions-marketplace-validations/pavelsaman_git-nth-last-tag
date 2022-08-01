@@ -1,0 +1,46 @@
+name: Create release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Get previous tag
+        id: previoustag
+        run: |
+          echo "::set-output name=tag::$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))"
+      - name: Get current tag
+        id: currenttag
+        run: |
+          CURRENT_TAG=${GITHUB_REF##*/}
+          echo "::set-output name=tag::$CURRENT_TAG"
+      - name: Get commit messages since last tag
+        id: commits
+        run: |
+          git log ${{ steps.previoustag.outputs.tag }}..${{ steps.currenttag.outputs.tag }} --pretty=format:"- %s" > commit-messages
+          CHANGELOG=$(cat commit-messages)
+          CHANGELOG="${CHANGELOG//'%'/'%25'}"
+          CHANGELOG="${CHANGELOG//$'\n'/'%0A'}"
+          CHANGELOG="${CHANGELOG//$'\r'/'%0D'}"
+          echo "::set-output name=commit_messages::$CHANGELOG"
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_name: ${{ steps.currenttag.outputs.tag }}
+          tag_name: ${{ steps.currenttag.outputs.tag }}
+          body: |
+            Changes in this release:
+            ${{ steps.commits.outputs.commit_messages }}
+          draft: true
