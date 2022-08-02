@@ -31,17 +31,17 @@ steps:
   # v1.3.2 <------- skip: 0
   - name: Get 4th tag from the last one
     id: gittagskipthree
-    uses: pavelsaman/git-nth-last-tag@v1.0.0
+    uses: pavelsaman/git-nth-last-tag@v1
     with:
       skip: 3
   - name: Get 2nd tag from the last one
     id: gittagskipone
-    uses: pavelsaman/git-nth-last-tag@v1.0.0
+    uses: pavelsaman/git-nth-last-tag@v1
     with:
       skip: 1
   - name: Get last tag
     id: gittagskipnone
-    uses: pavelsaman/git-nth-last-tag@v1.0.0
+    uses: pavelsaman/git-nth-last-tag@v1
   - run: echo ${{ steps.gittagskipthree.outputs.tag }} # v1.2.7
   - run: echo ${{ steps.gittagskipone.outputs.tag }}   # v1.3.1
   - run: echo ${{ steps.gittagskipnone.outputs.tag }}  # v1.3.2
